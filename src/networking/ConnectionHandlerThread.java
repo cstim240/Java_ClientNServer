@@ -39,7 +39,7 @@ public class ConnectionHandlerThread extends Thread{
 			is.close();
 			socket.close();
 		} catch (IOException e) {
-			System.out.println("\\t|ConnectionHandler:cleanup went wrong\\n");
+			System.out.println("\t|ConnectionHandler:cleanup went wrong\n");
 		}
 	}
 
@@ -47,7 +47,7 @@ public class ConnectionHandlerThread extends Thread{
 		while (true) {
 			String line = in.readLine();
 			if (line == null || line.equals("null") || line.equals("quit")) {
-				throw new ClientDisconnectedException("\\n\\t|Client has closed the connection ...\\n ");
+				throw new ClientDisconnectedException("\\n\t|Client has closed the connection ...\n ");
 			}
 			
 			System.out.printf("\tMessage received from client <<%s>>\n", line);
