@@ -49,7 +49,6 @@ public class Client {
 			System.exit(1);
 			cleanup();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			System.exit(1);
 			cleanup();
 		} 
