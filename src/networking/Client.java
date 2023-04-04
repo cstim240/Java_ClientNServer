@@ -36,8 +36,8 @@ public class Client {
 	private void requestService() { //connects client to server
 		try {
 			this.socket = new Socket(host, port); //we create a Socket using our instance vars as arguments, we need to surround it with a catch/try block
-			System.out.printf("\t|Client is connected to <<%s>> on port <<%d>>\n",host, port); //if connection is successful, this prints
-			System.out.printf("\t|To exit enter a single line containing: <<%s>>\n\t,","quit"); //we see how we handle "quit" in displayClientRequest()
+			System.out.printf("\t|Client connected to <<%s>> on port <<%d>>\n",host, port); //if connection is successful, this prints
+			System.out.printf("\t|To quit, type <<%d>>\n\t,",-1); //we see how we handle "quit" in displayClientRequest()
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream())); 
 			//inputstreamReader is a class that is used to convert bytes into chars, in this case the socket input stream is a byte stream being turned into a character stream for Bufferedreader to read
 			stdIn = new BufferedReader(new InputStreamReader(System.in)); 

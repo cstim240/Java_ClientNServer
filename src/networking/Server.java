@@ -18,7 +18,7 @@ import java.net.*;
  */
 
 public class Server {
-	private static int counter = 0;
+	//private static int counter = 0;
 	private int port;
 	/*	a ServerSocket is used to listen for incoming connections from clients. When a client attempts
 	* to connection to a server, the ServerSocket creates a new Socket obj to handle the communication
@@ -34,7 +34,7 @@ public class Server {
 			while (true) {
 				// waits until client requests a connection, then returns connection (socket)
 				Socket connection = ss.accept();
-				System.out.printf("\t|server got new connection request from <<%s>>\n", connection.getInetAddress());
+				System.out.printf("\t|Server got new connection request from <<%s>>\n", connection.getInetAddress());
 				
 				//create new handler for the connection
 				ConnectionHandlerThread handler = new ConnectionHandlerThread(connection);

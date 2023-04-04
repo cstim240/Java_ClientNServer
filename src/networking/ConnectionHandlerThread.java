@@ -47,12 +47,21 @@ public class ConnectionHandlerThread extends Thread{
 		while (true) {
 			String line = in.readLine();
 			if (line == null || line.equals("null") || line.equals("quit")) {
-				throw new ClientDisconnectedException("\\n\t|Client has closed the connection ...\n ");
+				throw new ClientDisconnectedException("\n\t|Client has closed the connection ...\n ");
 			}
 			
-			System.out.printf("\tMessage received from client <<%s>>\n", line);
-			out.println("Your message has been received!");
-			out.flush();
+			try {
+				int grade = Integer.parseInt(line); //converts the inputted line into int
+				if (grade < 0 || grade > 100 ) {
+					throw new NumberFormatException();
+				} 
+				System.out.printf("\tMessage received from client <<%d>>\n", grade);
+				out.println("Your message has been received!");
+				out.flush();
+			} catch (NumberFormatException e) {
+				out.printf("Invalid input. Please enter a number from 0 to 26");
+				out.flush();
+			}
 		}
 	}
 }
