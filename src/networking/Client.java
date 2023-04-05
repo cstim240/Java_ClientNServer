@@ -2,6 +2,7 @@ package networking;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Scanner;
 
 /** <h1> Lab 7 - Java Networking - Client and Server </h1>
  * <p>
@@ -22,9 +23,8 @@ public class Client {
 	private Socket socket;
 	private String host;
 	private int port;
-	private BufferedReader in; //BufferedReader usually wraps around an existing Reader to add bufferring functionality to make an input stream more efficient
-	private BufferedReader stdIn;
-	private PrintWriter out;
+	private DataInputStream in; //data input stream that lets an application read primitive Java data types from underlying input stream
+	private DataOutputStream out;
 	
 	
 	Client(String host, int port){
@@ -37,11 +37,9 @@ public class Client {
 		try {
 			this.socket = new Socket(host, port); //we create a Socket using our instance vars as arguments, we need to surround it with a catch/try block
 			System.out.printf("\t|Client connected to <<%s>> on port <<%d>>\n",host, port); //if connection is successful, this prints
-			System.out.printf("\t|To quit, type <<%d>>\n\t,",-1); //we see how we handle "quit" in displayClientRequest()
-			in = new BufferedReader(new InputStreamReader(socket.getInputStream())); 
-			//inputstreamReader is a class that is used to convert bytes into chars, in this case the socket input stream is a byte stream being turned into a character stream for Bufferedreader to read
-			stdIn = new BufferedReader(new InputStreamReader(System.in)); 
-			out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream())); //printwriter writes text 
+			System.out.printf("\t|To quit, type <<%d>>\n\t",-1); //we see how we handle "quit" in displayClientRequest()
+			in = new DataInputStream(socket.getInputStream()); 
+			out = new DataOutputStream(socket.getOutputStream()); //printwriter writes text 
 			displayClientRequest();
 		} catch (ClientDisconnectedException e) { //when a clientDisconnectedException occurs, it prints this message
 			System.out.printf("\t|Closing connection to server");
@@ -55,16 +53,23 @@ public class Client {
 	}
 	
 	private void displayClientRequest() throws IOException, ClientDisconnectedException {
-		String clientInput;
+		Scanner scan = new Scanner(System.in);
 		//while clientInput has something inside that's not "quit" or the end of inputstream has been reached
-		while((clientInput = stdIn.readLine()) != null && !clientInput.equals("quit")){
-			out.println(clientInput); //prints out in the console of the server
+		while(true){
+			int gradeInput = scan.nextInt();
+			
+			if (gradeInput == Configuration.QUIT) {
+				throw new ClientDisconnectedException(" ... user has entered exit command ..."); 
+			}
+			out.writeInt(gradeInput);
 			out.flush(); //usually used with outputstreams, the flush method ensures any bufferred text written to PrintWriter is sent over the network
-			System.out.printf("\t|Response received from server <<%s>>\n\t|", in.readLine());
+			
+			System.out.printf("\t|For grade <<%d>> server's response is <<%s>>\n\t", gradeInput, Configuration.RESPONSE[in.readInt()]); //Configuration.RESPONSE[in.readInt()]
 		}
 		
-		if (clientInput.equals("quit"))
-			throw new ClientDisconnectedException(" ... user has entered exit command ..."); 
+		
+		//if (clientInput.equals("quit"))
+			//throw new ClientDisconnectedException(" ... user has entered exit command ..."); 
 			//ClientDisconnectedException is a custom exception defined in another java class file, 
 			//by throwing this exception when the user enters "quit", it tells the system how to handle it
 	}
@@ -74,7 +79,6 @@ public class Client {
 		try {
 			out.close();
 			in.close();
-			stdIn.close();
 			socket.close();
 		} catch (IOException ioe) {
 			System.out.printf("Oops, something went wrong!"); 

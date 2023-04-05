@@ -4,19 +4,16 @@ import java.net.Socket;
 
 public class ConnectionHandlerThread extends Thread{
 	private Socket socket; //socket representing TCP/IP connection to Client
-	private InputStream is; //get data from client on this input stream
-	private OutputStream os; //can send data back to the client on this output stream
-	private BufferedReader in; //use bufferred reader to read client data
-	private PrintWriter out;
+	private DataInputStream in; //use bufferred reader to read client data
+	private DataOutputStream out;
+	private static int counter = 0;
 	
 	public ConnectionHandlerThread(Socket socket) {
 		this.socket = socket;
 		//establish assignments over socket's streams and how we can read/write from the data received
 		try {
-			is = socket.getInputStream(); //get data from client on this input stream 
-			os = socket.getOutputStream(); //send data back to client on this output stream
-			in = new BufferedReader(new InputStreamReader(is)); //use BufferredReader to read data
-			out = new PrintWriter(os, true);
+			in = new DataInputStream(socket.getInputStream()); //use BufferredReader to read data
+			out = new DataOutputStream(socket.getOutputStream());
 		} catch (IOException e) {
 			System.out.println("ConnectionHandler: " + e.getMessage());
 		} 
@@ -25,9 +22,10 @@ public class ConnectionHandlerThread extends Thread{
 	public void run() {
 		System.out.println("\tNew ConnectionHandler constructed ....\n");
 		try {
-			displayClientMessage();
+			++counter;
+			displayClientMessage(counter);
 		} catch (Exception e) {
-			System.out.printf("\tconnectionHandler.handleClientRequest: " + e.getMessage());
+			System.out.printf("\tClosing connection to server\t ");
 			cleanup();
 		}
 	}
@@ -36,32 +34,49 @@ public class ConnectionHandlerThread extends Thread{
 		System.out.println("\t|ConnectionHandler: ...\n\t|cleaning up and exiting ...\n");
 		try {
 			in.close();
-			is.close();
+			out.close();
 			socket.close();
 		} catch (IOException e) {
-			System.out.println("\t|ConnectionHandler:cleanup went wrong\n");
+			System.out.println("\t|ConnectionHandler: cleanup went wrong\n");
 		}
 	}
 
-	private void displayClientMessage() throws ClientDisconnectedException, IOException {
+	private void displayClientMessage(int counter) throws ClientDisconnectedException, IOException {
+		
 		while (true) {
-			String line = in.readLine();
-			if (line == null || line.equals("null") || line.equals("quit")) {
-				throw new ClientDisconnectedException("\n\t|Client has closed the connection ...\n ");
+			int grade = in.readInt();
+			System.out.printf("\t|Message received from client #%d <<%d>>\n", counter, grade);
+			
+			if (grade > 90) { //A+
+				out.writeInt(Configuration.APlus);
+			} else if (grade > 85) {
+				out.writeInt(Configuration.A);
+			} else if (grade > 80) {
+				out.writeInt(Configuration.AMinus);
+			} else if (grade > 77) { //B+
+				out.writeInt(Configuration.BPlus);
+			} else if (grade > 73) {
+				out.writeInt(Configuration.B);
+			} else if (grade > 70) {
+				out.writeInt(Configuration.BMinus);
+			} else if (grade > 67) { //C+
+				out.writeInt(Configuration.CPlus);
+			} else if (grade > 63) {
+				out.writeInt(Configuration.C);
+			} else if (grade > 60) {
+				out.writeInt(Configuration.CMinus);
+			} else if (grade > 50) { //D
+				out.writeInt(Configuration.D);
+			} else { 
+				out.writeInt(Configuration.F);
 			}
 			
-			try {
-				int grade = Integer.parseInt(line); //converts the inputted line into int
-				if (grade < 0 || grade > 100 ) {
-					throw new NumberFormatException();
-				} 
-				System.out.printf("\tMessage received from client <<%d>>\n", grade);
-				out.println("Your message has been received!");
-				out.flush();
-			} catch (NumberFormatException e) {
-				out.printf("Invalid input. Please enter a number from 0 to 26");
-				out.flush();
-			}
+			//if (line == null || line.equals("null") || line.equals("quit")) {
+				//throw new ClientDisconnectedException("\n\t|Client has closed the connection ...\n ");
+			//}
+			
+			out.flush();
 		}
+		
 	}
 }
