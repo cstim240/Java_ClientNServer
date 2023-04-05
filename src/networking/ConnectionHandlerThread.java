@@ -12,7 +12,7 @@ public class ConnectionHandlerThread extends Thread{
 		this.socket = socket;
 		//establish assignments over socket's streams and how we can read/write from the data received
 		try {
-			in = new DataInputStream(socket.getInputStream()); //use BufferredReader to read data
+			in = new DataInputStream(socket.getInputStream()); //instead of BufferredRead, we use DataInputStream to transfer primitive data
 			out = new DataOutputStream(socket.getOutputStream());
 		} catch (IOException e) {
 			System.out.println("ConnectionHandler: " + e.getMessage());
@@ -20,18 +20,18 @@ public class ConnectionHandlerThread extends Thread{
 	}
 	
 	public void run() {
-		System.out.println("\tNew ConnectionHandler constructed ....\n");
+		++counter;
+		System.out.printf("\t|Connection #%d established\n", counter);
 		try {
-			++counter;
 			displayClientMessage(counter);
 		} catch (Exception e) {
-			System.out.printf("\tClosing connection to server\t ");
+			System.out.printf("\t|ConnectionHandler.handleClientRequest: ");
 			cleanup();
 		}
 	}
 
 	private void cleanup() {
-		System.out.println("\t|ConnectionHandler: ...\n\t|cleaning up and exiting ...\n");
+		System.out.println("Connection reset: ...\n\t|cleaning up and exiting ...\n");
 		try {
 			in.close();
 			out.close();

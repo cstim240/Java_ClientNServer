@@ -25,6 +25,7 @@ public class Client {
 	private int port;
 	private DataInputStream in; //data input stream that lets an application read primitive Java data types from underlying input stream
 	private DataOutputStream out;
+	private Scanner scan;
 	
 	
 	Client(String host, int port){
@@ -37,7 +38,7 @@ public class Client {
 		try {
 			this.socket = new Socket(host, port); //we create a Socket using our instance vars as arguments, we need to surround it with a catch/try block
 			System.out.printf("\t|Client connected to <<%s>> on port <<%d>>\n",host, port); //if connection is successful, this prints
-			System.out.printf("\t|To quit, type <<%d>>\n\t",-1); //we see how we handle "quit" in displayClientRequest()
+			System.out.printf("\t|To quit, type <<%d>>\n\t|",-1); //we see how we handle "quit" in displayClientRequest()
 			in = new DataInputStream(socket.getInputStream()); 
 			out = new DataOutputStream(socket.getOutputStream()); //printwriter writes text 
 			displayClientRequest();
@@ -53,7 +54,7 @@ public class Client {
 	}
 	
 	private void displayClientRequest() throws IOException, ClientDisconnectedException {
-		Scanner scan = new Scanner(System.in);
+		//Scanner scan = new Scanner(System.in);
 		//while clientInput has something inside that's not "quit" or the end of inputstream has been reached
 		while(true){
 			int gradeInput = scan.nextInt();
@@ -79,6 +80,7 @@ public class Client {
 		try {
 			out.close();
 			in.close();
+			scan.close();
 			socket.close();
 		} catch (IOException ioe) {
 			System.out.printf("Oops, something went wrong!"); 
