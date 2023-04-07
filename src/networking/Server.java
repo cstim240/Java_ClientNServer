@@ -14,13 +14,12 @@ import java.net.*;
  * @author Tim Supan
  * @see <a href="https://docs.oracle.com/en/java/"> Java Documentation </a> 
  * @version 18.0.1.1
- * @since 2023-04-04
+ * @since 2023-07-04
  */
 
 public class Server {
-	//private static int counter = 0;
 	private int port;
-	/*	a ServerSocket is used to listen for incoming connections from clients. When a client attempts
+	/*a ServerSocket is used to listen for incoming connections from clients. When a client attempts
 	* to connection to a server, the ServerSocket creates a new Socket obj to handle the communication
 	* between the server and the client
 	*/

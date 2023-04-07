@@ -15,18 +15,16 @@ import java.util.Scanner;
  * @author Tim Supan
  * @see <a href="https://docs.oracle.com/en/java/"> Java Documentation </a> 
  * @version 18.0.1.1
- * @since 2023-04-04
+ * @since 2023-07-04
  */
 
 public class Client {
-	//--Instance vars----\\
 	private Socket socket;
 	private String host;
 	private int port;
 	private DataInputStream in; //data input stream that lets an application read primitive Java data types from underlying input stream
 	private DataOutputStream out;
-	private Scanner scan;
-	
+	private Scanner scan = new Scanner(System.in);
 	
 	Client(String host, int port){
 		this.host = host;
@@ -59,20 +57,15 @@ public class Client {
 		while(true){
 			int gradeInput = scan.nextInt();
 			
+			
 			if (gradeInput == Configuration.QUIT) {
 				throw new ClientDisconnectedException(" ... user has entered exit command ..."); 
 			}
 			out.writeInt(gradeInput);
 			out.flush(); //usually used with outputstreams, the flush method ensures any bufferred text written to PrintWriter is sent over the network
 			
-			System.out.printf("\t|For grade <<%d>> server's response is <<%s>>\n\t", gradeInput, Configuration.RESPONSE[in.readInt()]); //Configuration.RESPONSE[in.readInt()]
+			System.out.printf("\t|For grade <<%d>> server's response is <<%s>>\n\t|", gradeInput, Configuration.RESPONSE[in.readInt()]); //Configuration.RESPONSE[in.readInt()]
 		}
-		
-		
-		//if (clientInput.equals("quit"))
-			//throw new ClientDisconnectedException(" ... user has entered exit command ..."); 
-			//ClientDisconnectedException is a custom exception defined in another java class file, 
-			//by throwing this exception when the user enters "quit", it tells the system how to handle it
 	}
 	
 	private void cleanup() {
@@ -82,6 +75,7 @@ public class Client {
 			in.close();
 			scan.close();
 			socket.close();
+			scan.close();
 		} catch (IOException ioe) {
 			System.out.printf("Oops, something went wrong!"); 
 		}

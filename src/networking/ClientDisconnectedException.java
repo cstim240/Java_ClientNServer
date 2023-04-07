@@ -11,7 +11,7 @@ package networking;
  * @author Tim Supan
  * @see <a href="https://docs.oracle.com/en/java/"> Java Documentation </a> 
  * @version 18.0.1.1
- * @since 2023-04-04
+ * @since 2023-07-04
  */
 
 public class ClientDisconnectedException extends Exception {
